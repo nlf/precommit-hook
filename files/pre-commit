@@ -1,0 +1,23 @@
+#!/bin/bash
+ROOT_DIR=$(git rev-parse --show-toplevel)
+CUR_DIR=$(pwd)
+
+cd $ROOT_DIR
+jshint .
+if [ $? -eq 1 ]; then
+    echo 'Pre-commit hook failed linting! exiting'
+    cd $CUR_DIR
+    exit 1
+else
+    echo 'Pre-commit hook passed linting...'
+    npm test
+    if [ $? -eq 1 ]; then
+        echo 'Pre-commit hook failed unit tests! exiting'
+        cd $CUR_DIR
+        exit 1
+    else
+        echo 'Pre-commit hook passed unit tests...'
+        cd $CUR_DIR
+        exit 0
+    fi
+fi
