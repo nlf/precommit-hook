@@ -4,8 +4,6 @@ var fs = require('fs'),
 var projectPath = path.resolve(__dirname, '../../'),
     filePath = path.join(__dirname, 'files');
 
-console.log(__dirname);
-console.log(projectPath);
 path.exists(path.join(projectPath, '.git'), function (exists) {
     if (exists) {
         console.log('Found .git directory, adding pre-commit hook');
