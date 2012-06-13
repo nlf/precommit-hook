@@ -6,9 +6,14 @@ var projectPath = path.resolve(__dirname, '../../'),
 
 path.exists(path.join(projectPath, '.git'), function (exists) {
     if (exists) {
-        console.log('Found .git directory, adding pre-commit hook');
-        fs.createReadStream(path.join(filePath, 'pre-commit')).pipe(fs.createWriteStream(path.join(projectPath, '.git/hooks/pre-commit')));
-        fs.chmodSync(path.join(projectPath, '.git/hooks/pre-commit'), '755');
+        path.exists(path.join(projectPath, '.git/hooks/pre-commit'), function (hookExists) {
+            if (hookExists) {
+                fs.unlinkSync(path.join(projectPath, '.git/hooks/pre-commit'));
+            }
+            console.log('Found .git directory, adding pre-commit hook');
+            fs.createReadStream(path.join(filePath, 'pre-commit')).pipe(fs.createWriteStream(path.join(projectPath, '.git/hooks/pre-commit')));
+            fs.chmodSync(path.join(projectPath, '.git/hooks/pre-commit'), '755');
+        });
     }
     path.exists(path.join(projectPath, '.jshintignore'), function (exist) {
         if (!exist) {
