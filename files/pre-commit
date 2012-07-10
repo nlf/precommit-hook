@@ -10,14 +10,22 @@ if [ $? -eq 1 ]; then
     exit 1
 else
     echo 'Pre-commit hook passed linting...'
-    npm test
+    npm run-script validate
     if [ $? -eq 1 ]; then
-        echo 'Pre-commit hook failed unit tests! exiting'
+        echo 'Pre-commit hook failed validation! exiting'
         cd $CUR_DIR
         exit 1
     else
-        echo 'Pre-commit hook passed unit tests...'
-        cd $CUR_DIR
-        exit 0
+        echo 'Pre-commit hook passed validation...'
+        npm test
+        if [ $? -eq 1 ]; then
+            echo 'Pre-commit hook failed unit tests! exiting'
+            cd $CUR_DIR
+            exit 1
+        else
+            echo 'Pre-commit hook passed unit tests...'
+            cd $CUR_DIR
+            exit 0
+        fi
     fi
 fi
