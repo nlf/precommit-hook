@@ -4,9 +4,9 @@ var fs = require('fs'),
 var projectPath = path.resolve(__dirname, '../../'),
     filePath = path.join(__dirname, 'files');
 
-path.exists(path.join(projectPath, '.git'), function (exists) {
+fs.exists(path.join(projectPath, '.git'), function (exists) {
     if (exists) {
-        path.exists(path.join(projectPath, '.git/hooks/pre-commit'), function (hookExists) {
+        fs.exists(path.join(projectPath, '.git/hooks/pre-commit'), function (hookExists) {
             if (hookExists) {
                 fs.unlinkSync(path.join(projectPath, '.git/hooks/pre-commit'));
             }
@@ -15,12 +15,12 @@ path.exists(path.join(projectPath, '.git'), function (exists) {
             fs.chmodSync(path.join(projectPath, '.git/hooks/pre-commit'), '755');
         });
     }
-    path.exists(path.join(projectPath, '.jshintignore'), function (exist) {
+    fs.exists(path.join(projectPath, '.jshintignore'), function (exist) {
         if (!exist) {
             console.log('Did not find a .jshintignore, creating one');
             fs.createReadStream(path.join(filePath, 'jshintignore')).pipe(fs.createWriteStream(path.join(projectPath, '.jshintignore')));
         }
-        path.exists(path.join(projectPath, '.jshintrc'), function (exis) {
+        fs.exists(path.join(projectPath, '.jshintrc'), function (exis) {
             if (!exis) {
                 console.log('Did not find a .jshintrc, creating one');
                 fs.createReadStream(path.join(filePath, 'jshintrc')).pipe(fs.createWriteStream(path.join(projectPath, '.jshintrc')));
