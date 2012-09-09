@@ -3,7 +3,7 @@ ROOT_DIR=$(git rev-parse --show-toplevel)
 CUR_DIR=$(pwd)
 
 cd $ROOT_DIR
-jshint .
+`npm root`/precommit-hook/node_modules/.bin/jshint .
 if [ $? -eq 1 ]; then
     echo 'Pre-commit hook failed linting! exiting'
     cd $CUR_DIR
