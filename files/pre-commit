@@ -32,7 +32,7 @@ function runJshint(path, config) {
 }
 
 function runValidator(path, config) {
-    if (config.scripts.validate) {
+    if (config.scripts && config.scripts.validate) {
         exec(config.scripts.validate, { cwd: path }, function (err, stdout, stderr) {
             if (err) {
                 console.log('validation: ' + fail);
@@ -51,7 +51,7 @@ function runValidator(path, config) {
 }
 
 function runTests(path, config) {
-    if (config.scripts.test) {
+    if (config.scripts && config.scripts.test) {
         exec(config.scripts.test, { cwd: path }, function (err, stdout, stderr) {
             if (err) {
                 console.log('tests: ' + fail);

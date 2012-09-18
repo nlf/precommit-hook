@@ -2,7 +2,7 @@
   "author": "Nathan LaFreniere <quitlahok@gmail.com> (https://github.com/nathan-lafreniere)",
   "name": "precommit-hook",
   "description": "A useful pre-commit hook for git based projects that lints and runs npm test",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "homepage": "https://github.com/nathan-lafreniere/precommit-hook",
   "repository": {
     "url": "https://github.com/nathan-lafreniere/precommit-hook.git"
