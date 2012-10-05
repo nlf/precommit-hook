@@ -12,13 +12,23 @@ function getRoot() {
             process.exit(1);
         }
         var path = stderr.trim(),
-            config = require(path + '/package.json');
-        runJshint(stdout, config);
+            config = require(path + '/package.json'),
+            myconfig = config.config && config.config.precommit ? config.config.precommit : undefined;
+        runJshint(stdout, config, myconfig);
     });
 }
 
-function runJshint(path, config) {
-    exec('./node_modules/precommit-hook/node_modules/.bin/jshint .', { cwd: path }, function (err, stdout, stderr) {
+function runJshint(path, config, myconfig) {
+    var cmd;
+    if (myconfig && myconfig.hasOwnProperty('lint')) {
+        if (myconfig.lint && myconfig.lint !== true) {
+            cmd = myconfig.lint;
+        } else if (myconfig.lint === false) {
+            return runValidator(path, config, myconfig);
+        }
+    }
+    if (!cmd) cmd = './node_modules/precommit-hook/node_modules/.bin/jshint .';
+    exec(cmd, { cwd: path }, function (err, stdout, stderr) {
         if (err) {
             console.log('jshint: ' + fail);
             console.log(stdout);
@@ -26,14 +36,23 @@ function runJshint(path, config) {
             process.exit(1);
         } else {
             console.log('jshint: ' + ok);
-            runValidator(path, config);
+            runValidator(path, config, myconfig);
         }
     });
 }
 
-function runValidator(path, config) {
-    if (config.scripts && config.scripts.validate) {
-        exec(config.scripts.validate, { cwd: path }, function (err, stdout, stderr) {
+function runValidator(path, config, myconfig) {
+    var cmd;
+    if (myconfig && myconfig.hasOwnProperty('validate')) {
+        if (myconfig.validate && myconfig.validate !== true) {
+            cmd = myconfig.validate;
+        } else if (myconfig.validate === false) {
+            return runTests(path, config, myconfig);
+        }
+    }
+    if (!cmd && config.scripts && config.scripts.validate) cmd = config.scripts.validate;
+    if (cmd) {
+        exec(cmd, { cwd: path }, function (err, stdout, stderr) {
             if (err) {
                 console.log('validation: ' + fail);
                 console.log(stdout);
@@ -41,18 +60,27 @@ function runValidator(path, config) {
                 process.exit(1);
             } else {
                 console.log('validation: ' + ok);
-                runTests(path, config);
+                runTests(path, config, myconfig);
             }
         });
     } else {
         console.log('validation: ' + notfound);
-        runTests(path, config);
+        runTests(path, config, myconfig);
     }
 }
 
-function runTests(path, config) {
-    if (config.scripts && config.scripts.test) {
-        exec(config.scripts.test, { cwd: path }, function (err, stdout, stderr) {
+function runTests(path, config, myconfig) {
+    var cmd;
+    if (myconfig && myconfig.hasOwnProperty('test')) {
+        if (myconfig.test && myconfig.test !== true) {
+            cmd = myconfig.test;
+        } else if (myconfig.test === false) {
+            return process.exit(0);
+        }
+    }
+    if (!cmd && config.scripts && config.scripts.test) cmd = config.scripts.test;
+    if (cmd) {
+        exec(cmd, { cwd: path }, function (err, stdout, stderr) {
             if (err) {
                 console.log('tests: ' + fail);
                 console.log(stdout);

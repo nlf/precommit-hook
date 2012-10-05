@@ -50,6 +50,29 @@ npm test
 
 These scripts can be any shell executable commands, but must exit with a status code of 0 for success and 1 or greater for failure.
 
+In addition to this, a new feature is the ability to manually override these commands or disable them entirely. To do so you add a precommit config to your
+package.json, similar to the below example.
+
+```javascript
+{
+  "name": "your_project",
+  "description": "just an example",
+  "scripts": {
+    "validate": "./command/to/run",
+    "test": "./other/command"
+  },
+  "config": {
+    "precommit": {
+      "lint": false,
+      "validate": true,
+      "test": "mocha"
+    }
+  }
+}
+```
+
+This example would disable the linting step entirely, explicitly enables the validation step, and overrides the test step to run "mocha" instead of "./other/command"
+
 Usage
 -----
 
