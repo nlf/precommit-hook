@@ -11,6 +11,7 @@ var projectPath = path.resolve(__dirname, '../../'),
 
 if (existsSync(path.join(projectPath, '.git'))) {
     if (existsSync(pcPath)) fs.unlinkSync(pcPath);
+    if (!existsSync(path.dirname(pcPath))) fs.mkdirSync(path.dirname(pcPath));
     console.log('Found .git directory, adding pre-commit hook');
     var pcHook = fs.readFileSync(path.join(filePath, 'pre-commit'));
     fs.writeFileSync(pcPath, pcHook);
