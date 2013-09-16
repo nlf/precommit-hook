@@ -1,15 +1,16 @@
-var fs = require('fs'),
-    path = require('path');
+var fs = require('fs');
+var path = require('path');
 
 var existsSync = fs.existsSync || path.existsSync;
 
-var projectPath = path.resolve(__dirname, '../../'),
-		projectName = path.basename(projectPath),
-    filePath = path.join(__dirname, 'files'),
-    pcPath = path.join(projectPath, '.git', 'hooks', 'pre-commit'),
-    jsiPath = path.join(projectPath, '.jshintignore'),
-    jsrcPath = path.join(projectPath, '.jshintrc'),
-		pcModulePath = path.join(projectPath, '../', '.git', 'modules', projectName, 'hooks');
+var projectPath = path.resolve(__dirname, '../../');
+var packagePath = path.join(projectPath, 'package.json');
+var projectName = path.basename(projectPath);
+var filePath = path.join(__dirname, 'files');
+var pcPath = path.join(projectPath, '.git', 'hooks', 'pre-commit');
+var jsiPath = path.join(projectPath, '.jshintignore');
+var jsrcPath = path.join(projectPath, '.jshintrc');
+var pcModulePath = path.join(projectPath, '../', '.git', 'modules', projectName, 'hooks');
 
 var stats = fs.lstatSync(path.join(projectPath, '.git'));
 
@@ -21,12 +22,11 @@ if (stats.isDirectory() && existsSync(path.join(projectPath, '.git'))) {
     fs.writeFileSync(pcPath, pcHook);
     fs.chmodSync(pcPath, '755');
 } else if (existsSync(pcModulePath)){
-
-	console.log('Found submodule .git directory, adding pre-commit hook');
-	var pcHook = fs.readFileSync(path.join(filePath, 'pre-commit'));
-	var pcModuleFullPath = path.join(pcModulePath, 'pre-commit');
-	fs.writeFileSync(pcModuleFullPath, pcHook);
-	fs.chmodSync(pcModuleFullPath, '755');
+    console.log('Found submodule .git directory, adding pre-commit hook');
+    var pcHook = fs.readFileSync(path.join(filePath, 'pre-commit'));
+    var pcModuleFullPath = path.join(pcModulePath, 'pre-commit');
+    fs.writeFileSync(pcModuleFullPath, pcHook);
+    fs.chmodSync(pcModuleFullPath, '755');
 }
 
 if (!existsSync(jsiPath)) {
@@ -35,8 +35,8 @@ if (!existsSync(jsiPath)) {
     fs.writeFileSync(jsiPath, jsiFile);
 }
 
-if (!existsSync(jsrcPath)) {
-    console.log('Did not find a .jshintrc, creating one');
+if (!existsSync(jsrcPath) && (!existsSync(packagePath) || !require(packagePath).hasOwnProperty('jshintConfig'))) {
+    console.log('Did not find a .jshintrc and package.json does not contain jshintConfig, creating .jshintrc');
     var jsrcFile = fs.readFileSync(path.join(filePath, 'jshintrc'));
     fs.writeFileSync(jsrcPath, jsrcFile);
 }
