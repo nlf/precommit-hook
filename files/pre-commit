@@ -30,9 +30,9 @@ function runJshint(path, config, myconfig) {
     }
     if (!cmd) {
         if (exists('./node_modules/precommit-hook/node_modules/.bin/jshint')) {
-            cmd = './node_modules/precommit-hook/node_modules/.bin/jshint .';
+            cmd = '"./node_modules/precommit-hook/node_modules/.bin/jshint" .';
         } else if (exists('./node_modules/.bin/jshint')) {
-            cmd = './node_modules/.bin/jshint .';
+            cmd = '"./node_modules/.bin/jshint" .';
         } else {
             console.log('jshint: ' + notfound);
             return runValidator(path, config, myconfig);
