@@ -28,24 +28,25 @@ function runJshint(path, config, myconfig) {
             return runValidator(path, config, myconfig);
         }
     }
+    process.stdout.write('running jshint:     ');
     if (!cmd) {
         if (exists('./node_modules/precommit-hook/node_modules/.bin/jshint')) {
             cmd = '"./node_modules/precommit-hook/node_modules/.bin/jshint" .';
         } else if (exists('./node_modules/.bin/jshint')) {
             cmd = '"./node_modules/.bin/jshint" .';
         } else {
-            console.log('jshint: ' + notfound);
+            console.log(notfound);
             return runValidator(path, config, myconfig);
         }
     }
     exec(cmd, { cwd: path }, function (err, stdout, stderr) {
         if (err) {
-            console.log('jshint: ' + fail);
+            console.log(fail);
             console.log(stdout);
             console.log(stderr);
             process.exit(1);
         } else {
-            console.log('jshint: ' + ok);
+            console.log(ok);
             runValidator(path, config, myconfig);
         }
     });
@@ -61,20 +62,21 @@ function runValidator(path, config, myconfig) {
         }
     }
     if (!cmd && config.scripts && config.scripts.validate) cmd = config.scripts.validate;
+    process.stdout.write('running validation: ');
     if (cmd) {
         exec(cmd, { cwd: path }, function (err, stdout, stderr) {
             if (err) {
-                console.log('validation: ' + fail);
+                console.log(fail);
                 console.log(stdout);
                 console.log(stderr);
                 process.exit(1);
             } else {
-                console.log('validation: ' + ok);
+                console.log(ok);
                 runTests(path, config, myconfig);
             }
         });
     } else {
-        console.log('validation: ' + notfound);
+        console.log(notfound);
         runTests(path, config, myconfig);
     }
 }
@@ -89,20 +91,21 @@ function runTests(path, config, myconfig) {
         }
     }
     if (!cmd && config.scripts && config.scripts.test) cmd = config.scripts.test;
+    process.stdout.write('running tests:      ');
     if (cmd) {
         exec(cmd, { cwd: path }, function (err, stdout, stderr) {
             if (err) {
-                console.log('tests: ' + fail);
+                console.log(fail);
                 console.log(stdout);
                 console.log(stderr);
                 process.exit(1);
             } else {
-                console.log('tests: ' + ok);
+                console.log(ok);
                 process.exit(0);
             }
         });
     } else {
-        console.log('tests: ' + notfound);
+        console.log(notfound);
         process.exit(0);
     }
 }
