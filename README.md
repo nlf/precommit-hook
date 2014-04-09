@@ -58,6 +58,7 @@ package.json, similar to the below example.
   "name": "your_project",
   "description": "just an example",
   "scripts": {
+    "lint": "jshint --with --different-options",
     "validate": "./command/to/run",
     "test": "./other/command"
   },

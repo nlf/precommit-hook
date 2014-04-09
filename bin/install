@@ -14,7 +14,7 @@ function installHook() {
         var sourcePath, destPath;
 
         if (err) {
-            console.error('This project doesn\'t appear to be a git repository. JSHint configuration will be created anyway. To enable the pre-commit hook, run `git init` and reinstall precommit-hook.');
+            console.error('This project doesn\'t appear to be a git repository. JSHint configuration will be created anyway. To enable the pre-commit hook, run `git init` followed by `npm run precommit-hook install`.');
         } else {
             sourcePath = path.join(__dirname, 'pre-commit');
             destPath = path.join(root, '.git', 'hooks', 'pre-commit');
