@@ -65,7 +65,7 @@ function runCmd(prop, done) {
     });
 }
 
-// this method shamelessly adapted from https://github.com/cowbody/node-exit
+// this method shamelessly adapted from https://github.com/cowboy/node-exit
 function exit(code, callback) {
     var streams = [process.stdout, process.stderr];
     var drainCount = 0;
