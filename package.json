@@ -2,7 +2,7 @@
   "author": "Nathan LaFreniere <quitlahok@gmail.com> (https://github.com/nlf)",
   "name": "precommit-hook",
   "description": "A useful pre-commit hook for git based projects that lints and runs npm test",
-  "version": "0.4.1",
+  "version": "1.0.0",
   "license": "MIT",
   "homepage": "https://github.com/nlf/precommit-hook",
   "repository": {
@@ -10,10 +10,12 @@
   },
   "bin": {
     "hook_install": "./bin/install",
+    "hook_uninstall": "./bin/uninstall",
     "pre-commit": "./bin/pre-commit"
   },
   "scripts": {
-    "install": "hook_install"
+    "install": "hook_install",
+    "uninstall": "hook_uninstall"
   },
   "peerDependencies": {
     "jshint": "^2.4.4"

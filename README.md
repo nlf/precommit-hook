@@ -1,33 +1,50 @@
 What is it?
 -----------
 
-This module is a handy little tool that I wrote to help enforce code quality in node.js projects. It will run the JSHint linter over your code,
-followed by two optional steps: A custom validator specified by you in your package.json, and unit tests which are also specified in your package.json.
+This module is a handy little tool that I wrote to help enforce code quality in node.js projects. It allows you to run any scripts defined in your package.json before a commit is made.
 
-To facilitate the usage of JSHint, as part of the install step two files will be created in the root of your project, .jshintrc and .jshintignore. These
-files are configuration for JSHint itself. They are included to provide some sane defaults, such as making sure your installed npm modules are not being
-linted, and that some node.js global variables won't trigger errors. You are free to customize these files after they're created, and they will not be
-overwritten.
+## WARNING: If you already have a `.git/hooks/pre-commit` file, this package will overwrite it.
 
 Why should I use it?
 --------------------
 
-No one likes a messy code base. When working on a team, it becomes more and more difficult to make sure that your project's code stays consistent
-and error free. Since the hook lints all of the project's code, based on your configuration, you can be sure that at the very least standards are
-being followed.
+No one likes a messy code base. When working on a team, it becomes more and more difficult to make sure that your project's code stays consistent and error free. Since the hook can lint all of the project's code, based on your configuration, you can be sure that at the very least standards are being followed. It can also run build steps, unit tests, or any other script you like.
 
-In addition to this, the validate script can be used to perform whatever manual checking you like. Whether it's making sure that a file has been
-updated, pre-compiling static assets, or whatever other need you may have. Additional steps are easy to forget, so why chance it?
+Having a tool that automates this process has been priceless for us, and has very much improved the quality of our code.
 
-Unit tests are another thing that should always be verified before committing your code. Pushing code that breaks tests is an all too common occurrence.
+Usage
+-----
 
-Having a tool that automates all of these steps has been priceless for us, and has very much improved the quality of our code.
+When you install this project, by default it will create sane `.jshintignore` and `.jshintrc` files for you.
+
+You can prevent this behavior by modifying your package.json file. If a `lint` script is specified and does not start with the string `"jshint"` OR if you configure the hook to run specific scripts, and that list of scripts does not include `"lint"`, the jshint configuration files will not be configured.
+
+For example:
+
+```javascript
+{
+  "name": "your_project",
+  "description": "just an example",
+  "scripts": {
+    "lint": "some_other_linter ."
+  }
+}
+```
+
+OR
+
+```javascript
+{
+  "name": "your_project",
+  "description": "just an example",
+  "precommit": ["test"]
+}
+```
+
+If you do not configure the hook with an array of scripts to run, it will default to `["lint", "validate", "test"]` to maintain backwards compatibility with the old version of this hook. In addition to that, if a `lint` script is not specified, it will default to `"jshint ."`. If a `lint` script is configured, it will not be overridden. If an array of scripts is configured, it will be used and there will be no default `lint` script.
 
 Package.json
 ------------
-
-As mentioned above, there are two optional steps run by the hook. A validator, and unit tests. Specifying these scripts is done in your package.json, such
-as the below example.
 
 ```javascript
 {
@@ -48,10 +65,9 @@ npm run-script validate
 npm test
 ```
 
-These scripts can be any shell executable commands, but must exit with a status code of 0 for success and 1 or greater for failure.
+These scripts can be any shell executable commands, but must exit with a status code of 0 for success and 1 or greater for failure. The `PATH` environment variable used when executing these scripts will be similar to how npm configures it. That means if you `npm install jshint` locally to your project, you can put simply `"jshint ."` for your script rather than `"./node_modules/.bin/jshint ."`.
 
-In addition to this, a new feature is the ability to manually override these commands or disable them entirely. To do so you add a precommit config to your
-package.json, similar to the below example.
+You may configure what scripts will be run by the hook, by passing an array of script names to the `"precommit"` key in your package.json.
 
 ```javascript
 {
@@ -62,17 +78,11 @@ package.json, similar to the below example.
     "validate": "./command/to/run",
     "test": "./other/command"
   },
-  "config": {
-    "precommit": {
-      "lint": false,
-      "validate": true,
-      "test": "mocha"
-    }
-  }
+  "precommit": ["lint", "test"]
 }
 ```
 
-This example would disable the linting step entirely, explicitly enables the validation step, and overrides the test step to run "mocha" instead of "./other/command"
+This example would run only the `lint` and `test` scripts, in that order.
 
 Usage
 -----
@@ -80,9 +90,9 @@ Usage
     npm install precommit-hook
 
 
-Everything else is automatic! The npm install script will create the hook, and place a .jshintrc and .jshintignore file in your project if they don't exist.
-To update, just install again. Only the hook itself will be overwritten. I recommend putting precommit-hook in your project's devDependencies to make sure
-that anyone who may be contributing to your project will have the hook installed.
+Everything else is automatic!
+
+I recommend putting precommit-hook in your project's devDependencies to make sure that anyone who may be contributing to your project will have the hook installed.
 
 ```
 {
@@ -93,7 +103,7 @@ that anyone who may be contributing to your project will have the hook installed
     "test": "./other/command"
   },
   "devDependencies": {
-    "precommit-hook": ""
+    "precommit-hook": "latest"
   }
 }
 ```
