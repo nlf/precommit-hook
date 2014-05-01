@@ -15,7 +15,7 @@ var skipped = '\x1B[33mn/a\x1B[39m (skipped)';
 var longest = 0;
 
 // config
-var projectRoot = '/Users/nathan/Projects/test'; // lame templating so this gets populated correctly
+var projectRoot = '{{projectRoot}}'; // lame templating so this gets populated correctly
 var package = require(path.join(projectRoot, 'package.json'));
 var scripts = package.scripts;
 var config = package.precommit;
