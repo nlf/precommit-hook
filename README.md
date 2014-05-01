@@ -126,6 +126,12 @@ The default `.jshintrc` looks like the following:
 }
 ```
 
+And the default `.jshintignore` contains only one line
+
+```
+node_modules
+```
+
 Contact
 -------
 
