@@ -44,7 +44,7 @@ function configJshint() {
         fs.writeFileSync(ignoreDest, fs.readFileSync(ignoreSource));
     }
 
-    if (!fs.existsSync(configDest)) {
+    if (!fs.existsSync(configDest) && !package.jshintConfig) {
         console.log('Creating default .jshintrc...');
         fs.writeFileSync(configDest, fs.readFileSync(configSource));
     }

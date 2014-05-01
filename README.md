@@ -15,7 +15,7 @@ Having a tool that automates this process has been priceless for us, and has ver
 Usage
 -----
 
-When you install this project, by default it will create sane `.jshintignore` and `.jshintrc` files for you if they do not already exist. That means it's safe to upgrade the hook after customizing these files, as they will never be overwritten.
+When you install this project, by default it will create sane `.jshintignore` and `.jshintrc` files for you if they do not already exist. That means it's safe to upgrade the hook after customizing these files, as they will never be overwritten. If you have your jshint configuration in your package.json, then the `.jshintrc` file will not be created ever.
 
 You can prevent this behavior by modifying your package.json file. If a `lint` script is specified and does not start with the string `"jshint"` OR if you configure the hook to run specific scripts, and that list of scripts does not include `"lint"`, the jshint configuration files will not be created.
 
