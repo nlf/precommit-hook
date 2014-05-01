@@ -15,7 +15,7 @@ Having a tool that automates this process has been priceless for us, and has ver
 Usage
 -----
 
-When you install this project, by default it will create sane `.jshintignore` and `.jshintrc` files for you.
+When you install this project, by default it will create sane `.jshintignore` and `.jshintrc` files for you if they do not already exist. That means it's safe to upgrade the hook after customizing these files, as they will never be overwritten.
 
 You can prevent this behavior by modifying your package.json file. If a `lint` script is specified and does not start with the string `"jshint"` OR if you configure the hook to run specific scripts, and that list of scripts does not include `"lint"`, the jshint configuration files will not be configured.
 
@@ -105,6 +105,24 @@ I recommend putting precommit-hook in your project's devDependencies to make sur
   "devDependencies": {
     "precommit-hook": "latest"
   }
+}
+```
+
+JSHint Defaults
+---------------
+
+The default `.jshintrc` looks like the following:
+
+```javascript
+{
+  "node": true, // node environment
+
+  "curly": true, // enforce using curly braces around blocks
+  "latedef": true, // enforce defining a variable before using it
+  "quotmark": true, // allows either " or ' but you must be consistent
+  "undef": true, // error on use of undefined variables
+  "unused": true, // error on variables that are defined but never used
+  "trailing": true // error on trailing whitespace
 }
 ```
 
