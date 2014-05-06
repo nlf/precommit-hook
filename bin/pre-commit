@@ -91,7 +91,7 @@ function exit(code, callback) {
 
 if (!config || !config.length) {
     config = ['lint', 'validate', 'test'];
-    if (!scripts.lint) {
+    if (!scripts || !scripts.lint) {
         scripts.lint = 'jshint .';
     }
 }
