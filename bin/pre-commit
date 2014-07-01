@@ -10,6 +10,7 @@ var fail = '\x1B[31mfailed!\x1B[39m';
 var ok = '\x1B[32mok\x1B[39m';
 var notfound = '\x1B[33mn/a\x1B[39m (no script found)';
 var skipped = '\x1B[33mn/a\x1B[39m (skipped)';
+var dirty = '\x1B[33mchanges not staged for commit\x1B[39m\n';
 
 // longest name, for padding
 var longest = 0;
@@ -55,11 +56,24 @@ function runCmd(name, done) {
             console.log(stdout);
             console.log(stderr);
             exit(err.code, process.exit);
+        } else if (name === 'check' && check(stdout)) {
+            console.log(dirty);
+            console.log(stdout);
+            exit(0, done);
         } else {
             console.log(ok);
             exit(0, done);
         }
     });
+}
+
+function check(stdout) {
+  return stdout.split(/\r\n|\n|\r/)
+    .filter(function (change) {
+      // the status --porcelain format uses the char at index 1
+      // to indicate not staged files
+      return change.length && change[1] !== ' ';
+    }).length > 0;
 }
 
 // this method shamelessly adapted from https://github.com/cowboy/node-exit
@@ -90,8 +104,9 @@ function exit(code, callback) {
 }
 
 if (!config || !config.length) {
-    config = ['lint', 'validate', 'test'];
+    config = ['check', 'lint', 'validate', 'test'];
     scripts = scripts || {};
+    scripts.check = 'git status -s --porcelain';
     scripts.lint = scripts.lint || 'jshint .';
 }
 
