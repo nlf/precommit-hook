@@ -1,6 +1,5 @@
 {
   "node": true,
-
   "curly": true,
   "latedef": true,
   "quotmark": true,
