@@ -48,7 +48,7 @@ function runCmd(name, done) {
         return done();
     }
 
-    var cmd = (process.platform === 'win32' ? 'cmd /c ' : 'sh -c ') + '\"' + scripts[name] + '\"';
+    var cmd = (process.platform === 'win32' ? 'cmd /c ' : 'sh -c ')  + scripts[name];
     exec(cmd, { cwd: projectRoot, env: env }, function (err, stdout, stderr) {
         if (err) {
             console.log(fail);
