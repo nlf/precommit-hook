@@ -1,7 +1,7 @@
 What is it?
 -----------
 
-This module is a handy little tool that I wrote to help enforce code quality in node.js projects. It allows you to run any scripts defined in your package.json before a commit is made.
+This module is a handy little tool that I wrote to help enforce code quality in Node.js projects. It allows you to run any scripts defined in your package.json before a commit is made.
 
 ### WARNING: If you already have a `.git/hooks/pre-commit` file, this package will overwrite it.
 
@@ -41,7 +41,7 @@ OR
 }
 ```
 
-If you do not configure the hook with an array of scripts to run, it will default to `["lint", "validate", "test"]` to maintain backwards compatibility with the old version of this hook. In addition to that, if a `lint` script is not specified, it will default to `"jshint ."`. If a `lint` script is configured, it will not be overridden. If an array of scripts is configured, it will be used and there will be no default `lint` script.
+If you do not configure the hook with an array of scripts to run, it will default to `["lint", "validate", "test"]` to maintain backwards compatibility with the old version of this hook. In addition, if a `lint` script is not specified, it will default to `"jshint ."`. If a `lint` script is configured, it will not be overridden. If an array of scripts is configured, it will be used and there will be no default `lint` script.
 
 Package.json
 ------------
