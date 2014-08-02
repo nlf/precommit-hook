@@ -88,9 +88,14 @@ function exit(code, callback) {
 }
 
 if (!config || !config.length) {
-    config = ['lint', 'validate', 'test'];
+    config = ['lint'];
     scripts = scripts || {};
     scripts.lint = scripts.lint || 'jshint .';
+    ['validate', 'test'].forEach(function (elem) {
+        if (scripts[elem]) {
+            config.push(elem);
+        }
+    });
 }
 
 var tasks = [];
