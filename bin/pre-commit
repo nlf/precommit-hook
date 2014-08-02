@@ -43,7 +43,7 @@ function runCmd(name, done) {
 
     if (!scripts[name]) {
         console.log(notfound);
-        return done();
+        exit(1, process.exit);
     }
 
     var cmd = (process.platform === 'win32' ? 'cmd /c ' : 'sh -c ') + '\"' + scripts[name] + '\"';
