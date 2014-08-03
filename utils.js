@@ -13,7 +13,7 @@ exports.findGitRoot = function (callback) {
 };
 
 // traverse from this module's directory upwards until you find
-// the project root, which is the first directory whose parent is
+// the project root, which is the first directory
 // *not* named node_modules
 exports.findProjectRoot = function (base) {
     base = base || __dirname;
