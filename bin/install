@@ -11,13 +11,20 @@ configJshint();
 
 function installHook() {
     utils.findGitRoot(function (err, root) {
-        var sourcePath, destPath;
+        var sourcePath, destPath, hooksPath;
 
         if (err) {
             console.error('This project doesn\'t appear to be a git repository. To enable the pre-commit hook, run `git init` followed by `npm run precommit-hook install`.');
         } else {
             sourcePath = path.join(__dirname, 'pre-commit');
             destPath = path.join(root, '.git', 'hooks', 'pre-commit');
+            hooksPath = path.dirname(destPath);
+
+            // GitHub desktop app reportedly does not create the hooks directory, so let's create it here.
+            if (!fs.existsSync(hooksPath)) {
+                console.log('Creating .git/hooks...');
+                fs.mkdirSync(hooksPath);
+            }
 
             console.log('Creating .git/hooks/pre-commit...');
             fs.writeFileSync(destPath, fs.readFileSync(sourcePath, 'utf8').replace('{{projectRoot}}', projectRoot.replace(/\\/g, '\\\\')));
