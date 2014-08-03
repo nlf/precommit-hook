@@ -3,8 +3,6 @@ What is it?
 
 This module is a handy little tool that I wrote to help enforce code quality in Node.js projects. It allows you to run any scripts defined in your package.json before a commit is made.
 
-### WARNING: If you already have a `.git/hooks/pre-commit` file, this package will overwrite it.
-
 Why should I use it?
 --------------------
 
@@ -14,6 +12,8 @@ Having a tool that automates this process has been priceless for us, and has ver
 
 Usage
 -----
+
+If you already have a `.git/hooks/pre-commit` file, this package will print a warning but will still install successfully.
 
 When you install this project, by default it will create sane `.jshintignore` and `.jshintrc` files for you if they do not already exist. That means it's safe to upgrade the hook after customizing these files, as they will never be overwritten. If you have your jshint configuration in your package.json, then the `.jshintrc` file will not be created ever.
 
