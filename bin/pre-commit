@@ -7,7 +7,8 @@ var path = require('path');
 // some status strings
 var fail = '\x1B[31mfailed!\x1B[39m';
 var ok = '\x1B[32mok\x1B[39m';
-var notfound = '\x1B[33mn/a\x1B[39m (no script found)';
+var notfound = '\x1B[31mfailed\x1B[31m (no script found)';
+var notfoundDefault = '\x1B[33mn/a\x1B[39m (no script found)';
 
 // longest name, for padding
 var longest = 0;
@@ -43,7 +44,7 @@ function runCmd(name, done) {
 
     if (!scripts[name]) {
         console.log(notfound);
-        return done();
+        exit(1, process.exit);
     }
 
     var cmd = (process.platform === 'win32' ? 'cmd /c ' : 'sh -c ') + JSON.stringify(scripts[name]);
@@ -88,9 +89,16 @@ function exit(code, callback) {
 }
 
 if (!config || !config.length) {
-    config = ['lint', 'validate', 'test'];
+    config = ['lint'];
     scripts = scripts || {};
     scripts.lint = scripts.lint || 'jshint .';
+    ['validate', 'test'].forEach(function (elem) {
+        if (scripts[elem]) {
+            config.push(elem);
+        } else {
+            console.log(elem + ': ' + notfoundDefault);
+        }
+    });
 }
 
 var tasks = [];
