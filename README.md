@@ -57,8 +57,8 @@ Package.json
 }
 ```
 
-The contents of the validate and test properties are the shell command to be run to perform those functions. Having these specified in your package.json also
-lends you the ability to be able to run them manually like so
+The contents of the validate and test properties are the shell commands to perform those functions. Having these specified in your package.json also
+lends you the ability to be able to run them manually like so:
 
 ```
 npm run-script validate
