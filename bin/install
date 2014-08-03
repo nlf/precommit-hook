@@ -19,9 +19,14 @@ function installHook() {
             sourcePath = path.join(__dirname, 'pre-commit');
             destPath = path.join(root, '.git', 'hooks', 'pre-commit');
 
-            console.log('Creating .git/hooks/pre-commit...');
-            fs.writeFileSync(destPath, fs.readFileSync(sourcePath, 'utf8').replace('{{projectRoot}}', projectRoot.replace(/\\/g, '\\\\')));
-            fs.chmodSync(destPath, '755');
+            // Don't clobber existing pre-commit hook if this is a fresh install
+            if (process.env.npm_lifecycle_event === 'install' && fs.existsSync(destPath)) {
+                console.error('This project has a pre-commit hook (' + destPath + ') already installed. To replace it, remove it and install this package again.');
+            } else {
+                console.log('Creating .git/hooks/pre-commit...');
+                fs.writeFileSync(destPath, fs.readFileSync(sourcePath, 'utf8').replace('{{projectRoot}}', projectRoot.replace(/\\/g, '\\\\')));
+                fs.chmodSync(destPath, '755');
+            }
         }
     });
 }
