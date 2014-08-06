@@ -94,7 +94,7 @@ var runCmd = function (name, commandString, packageFile) {
     }
 
     var cmd = (process.platform === 'win32' ? 'cmd /c ' : 'sh -c ') + JSON.stringify(commandString);
-    exec(cmd, { env: env }, function (err, stdout, stderr) {
+    exec(cmd, { cwd: path.dirname(packageFile), env: env }, function (err, stdout, stderr) {
         if (err) {
             console.log(logStart + fail);
             console.log(stdout);
@@ -102,7 +102,6 @@ var runCmd = function (name, commandString, packageFile) {
             exit(err.code, process.exit);
         } else {
             console.log(logStart + ok);
-            exit(0, process.exit);
         }
     });
 };
@@ -113,8 +112,6 @@ packages.forEach(function (packageFile) {
     var package = require(packageFile);
     var scripts = package.scripts;
     var config = package.precommit;
-
-    process.chdir(path.dirname(packageFile));
 
     if (!config || !config.length) {
         config = ['lint'];
@@ -129,15 +126,8 @@ packages.forEach(function (packageFile) {
         });
     }
 
-    var tasks = [];
-
-    config.forEach(function (cmd, i) {
+    config.forEach(function (cmd) {
         longest = (longest < cmd.length) ? cmd.length : longest;
-        var task = runCmd.bind(null, cmd, scripts[cmd], packageFile);
-        tasks[i] = function () {
-            task.call(null, tasks[i + 1]);
-        };
+        runCmd(cmd, scripts[cmd], packageFile);
     });
-
-    tasks[0]();
 });
