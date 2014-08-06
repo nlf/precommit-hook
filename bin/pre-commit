@@ -113,7 +113,7 @@ var packages = findPackageFiles(projectRoot, 3);
 
 packages.forEach(function (packageFile) {
     // config
-    console.log('Running checks in ' + packageFile + '...');
+    console.log('running checks in ' + packageFile + '...');
     var package = require(packageFile);
     var scripts = package.scripts;
     var config = package.precommit;
