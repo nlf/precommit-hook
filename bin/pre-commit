@@ -83,7 +83,7 @@ var exit = function (code, callback) {
 // run the command for the given property
 var runCmd = function (name, commandString, packageFile) {
     var pad = '';
-    for (var i = 0, il = longest - name.length; i < il; ++i) {
+    for (var i = 0, il = longest - (name.length + packageFile.length); i < il; ++i) {
         pad += ' ';
     }
     var logStart = packageFile + ': ' + name + ': ' + pad;
@@ -108,6 +108,8 @@ var runCmd = function (name, commandString, packageFile) {
 
 var packages = findPackageFiles(projectRoot, 3);
 
+var tasks = [];
+
 packages.forEach(function (packageFile) {
     var package = require(packageFile);
     var scripts = package.scripts;
@@ -127,7 +129,15 @@ packages.forEach(function (packageFile) {
     }
 
     config.forEach(function (cmd) {
-        longest = (longest < cmd.length) ? cmd.length : longest;
-        runCmd(cmd, scripts[cmd], packageFile);
+        var length = packageFile.length + cmd.length;
+        longest = (longest < length) ? length : longest;
+        var task = runCmd.bind(null, cmd, scripts[cmd], packageFile);
+        tasks.push(function () {
+            task.call(null, tasks.length+1);
+        });
     });
+});
+
+tasks.forEach(function (task) {
+    task();
 });
