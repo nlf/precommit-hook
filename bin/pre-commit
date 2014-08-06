@@ -2,6 +2,7 @@
 
 // requires
 var exec = require('child_process').exec;
+var fs = require('fs');
 var path = require('path');
 
 // some status strings
@@ -13,11 +14,7 @@ var notfoundDefault = '\x1B[33mn/a\x1B[39m (no script found)';
 // longest name, for padding
 var longest = 0;
 
-// config
-var projectRoot = '{{projectRoot}}'; // lame templating so this gets populated correctly
-var package = require(path.join(projectRoot, 'package.json'));
-var scripts = package.scripts;
-var config = package.precommit;
+var projectRoot = path.join(__dirname, '..', '..');
 
 // set up environment
 var pathKey;
@@ -32,37 +29,32 @@ for (var key in process.env) {
 }
 env[pathKey] = path.join(projectRoot, 'node_modules', '.bin') + pathSep + env[pathKey];
 
-// run the command for the given property
-function runCmd(name, done) {
-    done = done || process.exit;
-
-    var pad = '';
-    for (var i = 0, il = longest - name.length; i < il; ++i) {
-        pad += ' ';
-    }
-    process.stdout.write('running ' + name + ': ' + pad);
-
-    if (!scripts[name]) {
-        console.log(notfound);
-        exit(1, process.exit);
+var findPackageFiles = function(dir, depth) {
+    if (depth < 0) {
+        return [];
     }
 
-    var cmd = (process.platform === 'win32' ? 'cmd /c ' : 'sh -c ') + JSON.stringify(scripts[name]);
-    exec(cmd, { cwd: projectRoot, env: env }, function (err, stdout, stderr) {
-        if (err) {
-            console.log(fail);
-            console.log(stdout);
-            console.log(stderr);
-            exit(err.code, process.exit);
-        } else {
-            console.log(ok);
-            exit(0, done);
+    var results = [];
+
+    var list = fs.readdirSync(dir);
+
+    list.forEach(function(file) {
+        var fullPath = path.join(dir, file);
+        var stat = fs.statSync(fullPath);
+        if (stat && stat.isDirectory() && ['node_modules', '.git'].indexOf(file) === -1) {
+            results = results.concat(findPackageFiles(path.join(dir, file), depth-1));
+        }
+
+        if (stat && stat.isFile() && file === 'package.json') {
+            results.push(fullPath);
         }
     });
-}
+
+    return results;
+};
 
 // this method shamelessly adapted from https://github.com/cowboy/node-exit
-function exit(code, callback) {
+var exit = function (code, callback) {
     var streams = [process.stdout, process.stderr];
     var drainCount = 0;
 
@@ -86,30 +78,71 @@ function exit(code, callback) {
     });
 
     tryToExit();
-}
+};
 
-if (!config || !config.length) {
-    config = ['lint'];
-    scripts = scripts || {};
-    scripts.lint = scripts.lint || 'jshint .';
-    ['validate', 'test'].forEach(function (elem) {
-        if (scripts[elem]) {
-            config.push(elem);
+// run the command for the given property
+var runCmd = function (name, commandString, done) {
+    done = done || process.exit;
+
+    var pad = '';
+    for (var i = 0, il = longest - name.length; i < il; ++i) {
+        pad += ' ';
+    }
+    process.stdout.write('running ' + name + ': ' + pad);
+
+    if (!commandString) {
+        console.log(notfound);
+        exit(1, process.exit);
+    }
+
+    var cmd = (process.platform === 'win32' ? 'cmd /c ' : 'sh -c ') + JSON.stringify(commandString);
+    exec(cmd, { env: env }, function (err, stdout, stderr) {
+        if (err) {
+            console.log(fail);
+            console.log(stdout);
+            console.log(stderr);
+            exit(err.code, process.exit);
         } else {
-            console.log(elem + ': ' + notfoundDefault);
+            console.log(ok);
+            exit(0, done);
         }
     });
-}
+};
 
-var tasks = [];
+var packages = findPackageFiles(projectRoot, 3);
 
-config.forEach(function (cmd, i) {
-    longest = (longest < cmd.length) ? cmd.length : longest;
-    var task = runCmd.bind(null, cmd);
-    tasks[i] = function () {
-        task.call(null, tasks[i + 1]);
-    };
+packages.forEach(function (packageFile) {
+    // config
+    console.log('Running checks in ' + packageFile + '...');
+    var package = require(packageFile);
+    var scripts = package.scripts;
+    var config = package.precommit;
+
+    process.chdir(path.dirname(packageFile));
+
+    if (!config || !config.length) {
+        config = ['lint'];
+        scripts = scripts || {};
+        scripts.lint = scripts.lint || 'jshint .';
+        ['validate', 'test'].forEach(function (elem) {
+            if (scripts[elem]) {
+                config.push(elem);
+            } else {
+                console.log(elem + ': ' + notfoundDefault);
+            }
+        });
+    }
+
+    var tasks = [];
+
+    config.forEach(function (cmd, i) {
+        longest = (longest < cmd.length) ? cmd.length : longest;
+        var task = runCmd.bind(null, cmd, scripts[cmd]);
+        tasks[i] = function () {
+            task.call(null, tasks[i + 1]);
+        };
+    });
+
+    console.log('running pre-commit checks...');
+    tasks[0]();
 });
-
-console.log('running pre-commit checks...');
-tasks[0]();
