@@ -81,30 +81,28 @@ var exit = function (code, callback) {
 };
 
 // run the command for the given property
-var runCmd = function (name, commandString, done) {
-    done = done || process.exit;
-
+var runCmd = function (name, commandString, packageFile) {
     var pad = '';
     for (var i = 0, il = longest - name.length; i < il; ++i) {
         pad += ' ';
     }
-    process.stdout.write('running ' + name + ': ' + pad);
+    var logStart = packageFile + ': ' + name + ': ' + pad;
 
     if (!commandString) {
-        console.log(notfound);
+        console.log(logStart + notfound);
         exit(1, process.exit);
     }
 
     var cmd = (process.platform === 'win32' ? 'cmd /c ' : 'sh -c ') + JSON.stringify(commandString);
     exec(cmd, { env: env }, function (err, stdout, stderr) {
         if (err) {
-            console.log(fail);
+            console.log(logStart + fail);
             console.log(stdout);
             console.log(stderr);
             exit(err.code, process.exit);
         } else {
-            console.log(ok);
-            exit(0, done);
+            console.log(logStart + ok);
+            exit(0, process.exit);
         }
     });
 };
@@ -112,8 +110,6 @@ var runCmd = function (name, commandString, done) {
 var packages = findPackageFiles(projectRoot, 3);
 
 packages.forEach(function (packageFile) {
-    // config
-    console.log('running checks in ' + packageFile + '...');
     var package = require(packageFile);
     var scripts = package.scripts;
     var config = package.precommit;
@@ -128,7 +124,7 @@ packages.forEach(function (packageFile) {
             if (scripts[elem]) {
                 config.push(elem);
             } else {
-                console.log(elem + ': ' + notfoundDefault);
+                console.log(packageFile + ': ' + elem + ': ' + notfoundDefault);
             }
         });
     }
@@ -137,12 +133,11 @@ packages.forEach(function (packageFile) {
 
     config.forEach(function (cmd, i) {
         longest = (longest < cmd.length) ? cmd.length : longest;
-        var task = runCmd.bind(null, cmd, scripts[cmd]);
+        var task = runCmd.bind(null, cmd, scripts[cmd], packageFile);
         tasks[i] = function () {
             task.call(null, tasks[i + 1]);
         };
     });
 
-    console.log('running pre-commit checks...');
     tasks[0]();
 });
