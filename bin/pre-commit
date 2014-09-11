@@ -48,7 +48,7 @@ function runCmd(name, done) {
     }
 
     var cmd = (process.platform === 'win32' ? 'cmd /c ' : 'sh -c ') + JSON.stringify(scripts[name]);
-    exec(cmd, { cwd: projectRoot, env: env }, function (err, stdout, stderr) {
+    exec(cmd, { cwd: projectRoot, env: env, maxBuffer: 1024*1024 }, function (err, stdout, stderr) {
         if (err) {
             console.log(fail);
             console.log(stdout);
