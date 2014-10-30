@@ -1,58 +1,7 @@
 #!/usr/bin/env node
 
-var fs = require('fs');
-var path = require('path');
-var utils = require('../utils');
+var Validate = require('git-validate');
 
-var projectRoot = utils.findProjectRoot();
-
-installHook();
-configJshint();
-
-function installHook() {
-    utils.findGitRoot(function (err, root) {
-        var sourcePath, destPath, hooksPath;
-
-        if (err) {
-            console.error('This project doesn\'t appear to be a git repository. To enable the pre-commit hook, run `git init` followed by `npm run precommit-hook install`.');
-        } else {
-            sourcePath = path.join(__dirname, 'pre-commit');
-            destPath = path.join(root, '.git', 'hooks', 'pre-commit');
-            hooksPath = path.dirname(destPath);
-
-            // GitHub desktop app reportedly does not create the hooks directory, so let's create it here.
-            if (!fs.existsSync(hooksPath)) {
-                console.log('Creating .git/hooks...');
-                fs.mkdirSync(hooksPath);
-            }
-
-            console.log('Creating .git/hooks/pre-commit...');
-            fs.writeFileSync(destPath, fs.readFileSync(sourcePath, 'utf8').replace('{{projectRoot}}', projectRoot.replace(/\\/g, '\\\\')));
-            fs.chmodSync(destPath, '755');
-        }
-    });
-}
-
-function configJshint() {
-    // if linting is disabled, or is not jshint, don't bother configuring it
-    var package = require(utils.findPackageJson());
-    if ((package.scripts && package.scripts.lint && !/^jshint/.test(package.scripts.lint)) ||
-        (package.precommit && !package.precommit.filter(function (p) { return p === 'lint'; }).length)) {
-        return;
-    }
-
-    var ignoreSource = path.resolve(__dirname, '..', 'files', 'jshintignore');
-    var ignoreDest = path.join(projectRoot, '.jshintignore');
-    var configSource = path.resolve(__dirname, '..', 'files', 'jshintrc');
-    var configDest = path.join(projectRoot, '.jshintrc');
-
-    if (!fs.existsSync(ignoreDest)) {
-        console.log('Creating default .jshintignore...');
-        fs.writeFileSync(ignoreDest, fs.readFileSync(ignoreSource));
-    }
-
-    if (!fs.existsSync(configDest) && !package.jshintConfig) {
-        console.log('Creating default .jshintrc...');
-        fs.writeFileSync(configDest, fs.readFileSync(configSource));
-    }
-}
+Validate.copy('../jshintrc', '.jshintrc');
+Validate.copy('../jshintignore', '.jshintignore');
+Validate.copy('../validate.json', '.validate.json', { overwrite: true });
