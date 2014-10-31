@@ -1,8 +1,6 @@
 {
   "scripts": {
-    "lint": "jshint .",
-    "validate": "",
-    "test": ""
+    "lint": "jshint ."
   },
   "pre-commit": ["lint", "validate", "test"]
 }
