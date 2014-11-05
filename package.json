@@ -9,7 +9,8 @@
     "url": "https://github.com/nlf/precommit-hook.git"
   },
   "dependencies": {
-    "git-validate": "latest"
+    "git-validate": "*",
+    "jshint": "*"
   },
   "scripts": {
     "install": "node bin/install"
