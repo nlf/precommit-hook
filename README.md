@@ -8,7 +8,7 @@ This module is a handy little tool that I wrote to help enforce code quality in 
 Breaking changes
 ----------------
 
-As of version 2.0.0 of this module, the configuration key in `package.json` has been changed to `"pre-commit"` with a dash, instead of the old `"precommit"`. All other functionality should work the same.
+In the upcoming version 2.0.0 of this module (and the current master branch in this repository), the configuration key in package.json will be changed to "pre-commit" with a dash, instead of the old "precommit". All other functionality should work the same.
 
 Why should I use it?
 --------------------
