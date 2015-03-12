@@ -22,7 +22,7 @@ Usage
 
 When you install this project, by default it will create sane `.jshintignore` and `.jshintrc` files for you if they do not already exist. That means it's safe to upgrade the hook after customizing these files, as they will never be overwritten. If you have your jshint configuration in your package.json, then the `.jshintrc` file will not be created ever.
 
-A `.validate.json` file will also be created and leveraged by [git-validate](https://github.com/nlf/git-validate) in order to run your scripts.
+A `.validate.json` file will also be created to provide *defaults* to [git-validate](https://github.com/nlf/git-validate) in order to run your scripts. This configuration is only used if you have not specified your own configuration in `package.json`.
 
 If you need to make changes to the hook's configuration, you should *always* make them in your `package.json` as the `.validate.json` file *will* be overwritten every time the install script is run.
 
