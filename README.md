@@ -1,6 +1,8 @@
 What is it?
 -----------
 
+[![Join the chat at https://gitter.im/nlf/precommit-hook](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/nlf/precommit-hook?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 This module is a handy little tool that I wrote to help enforce code quality in Node.js projects. It allows you to run any scripts defined in your package.json before a commit is made.
 
 ### WARNING: If you already have a `.git/hooks/pre-commit` file, this package will overwrite it.
