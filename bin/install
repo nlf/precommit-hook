@@ -4,5 +4,6 @@ var Validate = require('git-validate');
 
 Validate.copy('../jshintrc', '.jshintrc');
 Validate.copy('../jshintignore', '.jshintignore');
-Validate.copy('../validate.json', '.validate.json', { overwrite: true });
-Validate.installHooks('pre-commit');
+Validate.installScript('lint', 'jshint .');
+Validate.installScript('validate', 'npm ls');
+Validate.configureHook('pre-commit', ['lint', 'validate', 'test']);
