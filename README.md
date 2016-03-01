@@ -1,6 +1,8 @@
 What is it?
 -----------
 
+### Note: This module is simply a wrapper around [git-validate](https://github.com/nlf/git-validate). If you wish to use a linter other than jshint, I highly recommend you look there instead as this module will always bundle jshint for historical reasons.
+
 [![Join the chat at https://gitter.im/nlf/precommit-hook](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/nlf/precommit-hook?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 This module is a handy little tool that I wrote to help enforce code quality in Node.js projects. It allows you to run any scripts defined in your package.json before a commit is made.
